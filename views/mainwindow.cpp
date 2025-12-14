@@ -4,6 +4,7 @@
 #include "ProductView.h"
 #include "transactionview.h"
 #include <QMessageBox>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,6 +19,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // PENTING: Pastikan folder data/ ada
+    m_dataHandler.ensureFileExists("customer.txt");
+    m_dataHandler.ensureFileExists("vehicle.txt");
+    m_dataHandler.ensureFileExists("rental.txt");
+
     loadAllData();
     setupViews();
     setupConnections();
@@ -27,12 +33,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // AUTO SAVE saat aplikasi ditutup
     saveAllData();
 
     delete m_UserView;
     delete m_productView;
     delete m_transactionView;
     delete ui;
+}
+
+// TAMBAHKAN: Override closeEvent untuk auto-save
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    saveAllData();
+    QMessageBox::information(this, "Data Saved", "All data has been saved automatically.");
+    event->accept();
 }
 
 void MainWindow::setupViews()
@@ -77,12 +92,13 @@ void MainWindow::setupViews()
         ui->btnProcessRental
         );
 
-    // Setup Rentals Tab
+    // Setup Rentals Tab (dengan fitur return)
     m_transactionView->setupRentalsUi(
         ui->tableRentals,
         ui->lineEditSearchRental,
         ui->btnViewRentalDetails,
-        ui->btnDeleteRental
+        ui->btnDeleteRental,
+        ui->btnReturnVehicle  // TAMBAHAN: tombol return
         );
 
     // Load initial data
@@ -96,13 +112,22 @@ void MainWindow::setupConnections()
     // Tab changed
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
 
-    // Data changed signals
-    connect(m_UserView, &UserView::dataChanged, this, &MainWindow::updateDashboard);
-    connect(m_productView, &ProductView::dataChanged, this, &MainWindow::updateDashboard);
+    // Data changed signals - TAMBAHKAN AUTO SAVE
+    connect(m_UserView, &UserView::dataChanged, this, [this]() {
+        updateDashboard();
+        saveAllData(); // Auto save
+    });
+
+    connect(m_productView, &ProductView::dataChanged, this, [this]() {
+        updateDashboard();
+        saveAllData(); // Auto save
+    });
+
     connect(m_transactionView, &TransactionView::dataChanged, this, [this]() {
         updateDashboard();
         m_productView->refresh();
         m_transactionView->refreshAvailableVehicles();
+        saveAllData(); // Auto save
     });
 
     // Menu actions
@@ -231,7 +256,7 @@ void MainWindow::onLoadAll()
 void MainWindow::onAbout()
 {
     QMessageBox::about(this, "About",
-                       "Vehicle Rental Management System\n"
-                       "Version 1.0\n\n"
+                       "TransGo\n"
+                       "Version 2.0\n\n"
                        "A system for managing vehicle rentals.");
 }

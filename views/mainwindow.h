@@ -27,6 +27,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    // TAMBAHAN: Override untuk auto-save saat close
+    void closeEvent(QCloseEvent *event) override;
+
 private slots:
     void onTabChanged(int index);
     void updateDashboard();

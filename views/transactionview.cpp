@@ -44,17 +44,20 @@ void TransactionView::setupNewRentalUi(QComboBox* comboCustomer,
 void TransactionView::setupRentalsUi(QTableWidget* tableRentals,
                                      QLineEdit* searchEdit,
                                      QPushButton* btnViewDetails,
-                                     QPushButton* btnDelete)
+                                     QPushButton* btnDelete,
+                                     QPushButton* btnReturn)  // TAMBAHAN parameter
 {
     m_tableRentals = tableRentals;
     m_searchEdit = searchEdit;
     m_btnViewDetails = btnViewDetails;
     m_btnDelete = btnDelete;
+    m_btnReturn = btnReturn;  // TAMBAHAN
 
     // Connect signals
     connect(m_searchEdit, &QLineEdit::textChanged, this, &TransactionView::onSearchRentals);
     connect(m_btnViewDetails, &QPushButton::clicked, this, &TransactionView::onViewRentalDetails);
     connect(m_btnDelete, &QPushButton::clicked, this, &TransactionView::onDeleteRental);
+    connect(m_btnReturn, &QPushButton::clicked, this, &TransactionView::onReturnVehicle);  // TAMBAHAN
 }
 
 void TransactionView::loadData() {
@@ -149,6 +152,10 @@ void TransactionView::loadRentalsTable() {
         Customer* customer = m_userController->getById(rental.getCustomerId());
         QString customerName = customer ? QString::fromStdString(customer->getName()) : "Unknown";
 
+        // TAMBAHAN: Cek apakah ada kendaraan yang masih di-rent
+        bool hasActiveVehicles = rental.hasDays();
+        QString status = hasActiveVehicles ? "Active" : "Completed";
+
         m_tableRentals->setItem(i, 0, new QTableWidgetItem(QString::number(rental.getId())));
         m_tableRentals->setItem(i, 1, new QTableWidgetItem(customerName));
         m_tableRentals->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(rental.getDateTime())));
@@ -157,6 +164,15 @@ void TransactionView::loadRentalsTable() {
         m_tableRentals->setItem(i, 5, new QTableWidgetItem(
                                           QString("Rp %L1").arg(rental.getSubtotal(), 0, 'f', 0)
                                           ));
+
+        // TAMBAHAN: Status column
+        QTableWidgetItem* statusItem = new QTableWidgetItem(status);
+        if (hasActiveVehicles) {
+            statusItem->setBackground(QBrush(QColor(255, 193, 7, 100))); // Orange
+        } else {
+            statusItem->setBackground(QBrush(QColor(76, 175, 80, 100))); // Green
+        }
+        m_tableRentals->setItem(i, 6, statusItem);
     }
 
     applyFilters();
@@ -403,10 +419,14 @@ void TransactionView::onViewRentalDetails() {
     details += "Vehicles:\n";
 
     for (const auto& day : rental->getDays()) {
-        details += QString("- %1 x %2 days = Rp %3\n")
-        .arg(QString::fromStdString(day.getVehicleName()))
-            .arg(day.getRentalDays())
-            .arg(day.getSubtotal(), 0, 'f', 0);
+        Vehicle* vehicle = m_vehicleController->getById(day.getVehicleId());
+        QString vehicleStatus = vehicle ? (vehicle->isAvailable() ? " ✓ Returned" : " ⏳ Not Returned") : "";
+
+        details += QString("- %1 x %2 days = Rp %3%4\n")
+                       .arg(QString::fromStdString(day.getVehicleName()))
+                       .arg(day.getRentalDays())
+                       .arg(day.getSubtotal(), 0, 'f', 0)
+                       .arg(vehicleStatus);
     }
 
     details += QString("\nTotal: Rp %L1").arg(rental->getSubtotal(), 0, 'f', 0);
@@ -440,5 +460,68 @@ void TransactionView::onDeleteRental() {
             emit dataChanged();
             QMessageBox::information(this, "Success", "Rental deleted!");
         }
+    }
+}
+
+// ============ FITUR BARU: RETURN VEHICLE ============
+void TransactionView::onReturnVehicle() {
+    int rentalId = getSelectedRentalId();
+    if (rentalId < 0) {
+        QMessageBox::warning(this, "Warning", "Please select a rental.");
+        return;
+    }
+
+    Transaction* rental = m_rentalController->getById(rentalId);
+    if (!rental) return;
+
+    // Check if ada kendaraan yang belum dikembalikan
+    QStringList unreturned;
+    for (const auto& day : rental->getDays()) {
+        Vehicle* vehicle = m_vehicleController->getById(day.getVehicleId());
+        if (vehicle && !vehicle->isAvailable()) {
+            unreturned << QString("%1 - %2 %3")
+            .arg(day.getVehicleId())
+                .arg(QString::fromStdString(vehicle->getBrand()))
+                .arg(QString::fromStdString(vehicle->getModel()));
+        }
+    }
+
+    if (unreturned.isEmpty()) {
+        QMessageBox::information(this, "Info", "All vehicles have been returned.");
+        return;
+    }
+
+    // Pilih kendaraan yang mau dikembalikan
+    bool ok;
+    QString selected = QInputDialog::getItem(this, "Return Vehicle",
+                                             "Select vehicle to return:",
+                                             unreturned, 0, false, &ok);
+    if (!ok) return;
+
+    // Extract vehicle ID
+    int vehicleId = selected.split(" - ").first().toInt();
+
+    Vehicle* vehicle = m_vehicleController->getById(vehicleId);
+    if (!vehicle) return;
+
+    // Konfirmasi
+    QString confirmMsg = QString("Return this vehicle?\n\n%1 %2")
+                             .arg(QString::fromStdString(vehicle->getBrand()))
+                             .arg(QString::fromStdString(vehicle->getModel()));
+
+    if (QMessageBox::question(this, "Confirm Return", confirmMsg) == QMessageBox::Yes) {
+        // Mark vehicle as available
+        vehicle->setAvailable(true);
+        m_vehicleController->update(*vehicle);
+
+        QMessageBox::information(this, "Success",
+                                 QString("Vehicle %1 %2 has been returned!")
+                                     .arg(QString::fromStdString(vehicle->getBrand()))
+                                     .arg(QString::fromStdString(vehicle->getModel())));
+
+        // Refresh tables
+        loadRentalsTable();
+        loadAvailableVehicles();
+        emit dataChanged();
     }
 }

@@ -34,11 +34,12 @@ public:
                           QPushButton* btnClear,
                           QPushButton* btnProcess);
 
-    // Setup Rentals Tab
+    // Setup Rentals Tab (UPDATED dengan parameter return button)
     void setupRentalsUi(QTableWidget* tableRentals,
                         QLineEdit* searchEdit,
                         QPushButton* btnViewDetails,
-                        QPushButton* btnDelete);
+                        QPushButton* btnDelete,
+                        QPushButton* btnReturn = nullptr);  // TAMBAHAN parameter
 
     void loadData();
     void refresh();
@@ -62,6 +63,7 @@ private slots:
     void onSearchRentals(const QString& text);
     void onViewRentalDetails();
     void onDeleteRental();
+    void onReturnVehicle();  // TAMBAHAN: Slot untuk return vehicle
 
 private:
     UserController* m_userController;
@@ -83,6 +85,7 @@ private:
     QLineEdit* m_searchEdit;
     QPushButton* m_btnViewDetails;
     QPushButton* m_btnDelete;
+    QPushButton* m_btnReturn;  // TAMBAHAN
 
     // Current transaction
     Transaction m_currentTransaction;

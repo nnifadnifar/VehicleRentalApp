@@ -997,117 +997,137 @@
        </layout>
       </widget>
 
-      <!-- TAB 5: RENTALS HISTORY -->
-      <widget class="QWidget" name="tabRentals">
-       <attribute name="title">
-        <string> Rentals</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_12">
-        <property name="spacing">
-         <number>15</number>
-        </property>
-        <property name="margin">
-         <number>20</number>
-        </property>
-        <item>
-         <widget class="QFrame" name="frameRentalFilter">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">
-            QFrame {
-                background-color: white;
-                border-radius: 8px;
-                border: 1px solid #e0e0e0;
-            }
-           </string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_10">
-           <item>
-            <widget class="QLineEdit" name="lineEditSearchRental">
-             <property name="placeholderText">
-              <string> Search by customer or ID...</string>
-             </property>
-             <property name="minimumHeight">
-              <number>36</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnViewRentalDetails">
-             <property name="text">
-              <string> View Details</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: #2196F3; color: white;</string>
-             </property>
-             <property name="minimumHeight">
-              <number>36</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnDeleteRental">
-             <property name="text">
-              <string>️ Delete</string>
-             </property>
-             <property name="minimumHeight">
-              <number>36</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTableWidget" name="tableRentals">
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="selectionBehavior">
-           <set>QAbstractItemView::SelectRows</set>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-          <column>
-           <property name="text">
-            <string>ID</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Customer</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Date</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Vehicles</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Total Days</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Total</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-       </layout>
+<!-- TAB 5: RENTALS HISTORY - UPDATED dengan Return Button dan Status Column -->
+<widget class="QWidget" name="tabRentals">
+ <attribute name="title">
+  <string> Rentals</string>
+ </attribute>
+ <layout class="QVBoxLayout" name="verticalLayout_12">
+  <property name="spacing">
+   <number>15</number>
+  </property>
+  <property name="margin">
+   <number>20</number>
+  </property>
+  <item>
+   <widget class="QFrame" name="frameRentalFilter">
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+      QFrame {
+          background-color: white;
+          border-radius: 8px;
+          border: 1px solid #e0e0e0;
+      }
+     </string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QLineEdit" name="lineEditSearchRental">
+       <property name="placeholderText">
+        <string> Search by customer or ID...</string>
+       </property>
+       <property name="minimumHeight">
+        <number>36</number>
+       </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnViewRentalDetails">
+       <property name="text">
+        <string> View Details</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #2196F3; color: white;</string>
+       </property>
+       <property name="minimumHeight">
+        <number>36</number>
+       </property>
+      </widget>
+     </item>
+     <!-- TAMBAHAN: Tombol Return Vehicle -->
+     <item>
+      <widget class="QPushButton" name="btnReturnVehicle">
+       <property name="text">
+        <string>↩ Return Vehicle</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #4CAF50; color: white;</string>
+       </property>
+       <property name="minimumHeight">
+        <number>36</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnDeleteRental">
+       <property name="text">
+        <string>️ Delete</string>
+       </property>
+       <property name="minimumHeight">
+        <number>36</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </item>
+  <item>
+   <widget class="QTableWidget" name="tableRentals">
+    <property name="alternatingRowColors">
+     <bool>true</bool>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="selectionBehavior">
+     <set>QAbstractItemView::SelectRows</set>
+    </property>
+    <property name="sortingEnabled">
+     <bool>true</bool>
+    </property>
+    <column>
+     <property name="text">
+      <string>ID</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Customer</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Date</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Vehicles</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Total Days</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Total</string>
+     </property>
+    </column>
+    <!-- TAMBAHAN: Kolom Status -->
+    <column>
+     <property name="text">
+      <string>Status</string>
+     </property>
+    </column>
+   </widget>
+  </item>
+ </layout>
+</widget>
 
      </widget>
     </item>

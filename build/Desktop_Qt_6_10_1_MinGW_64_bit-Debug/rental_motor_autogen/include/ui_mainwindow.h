@@ -121,6 +121,7 @@ public:
     QHBoxLayout *horizontalLayout_10;
     QLineEdit *lineEditSearchRental;
     QPushButton *btnViewRentalDetails;
+    QPushButton *btnReturnVehicle;
     QPushButton *btnDeleteRental;
     QTableWidget *tableRentals;
     QMenuBar *menubar;
@@ -781,12 +782,12 @@ public:
         frameRentalFilter->setObjectName("frameRentalFilter");
         frameRentalFilter->setFrameShape(QFrame::StyledPanel);
         frameRentalFilter->setStyleSheet(QString::fromUtf8("\n"
-"            QFrame {\n"
-"                background-color: white;\n"
-"                border-radius: 8px;\n"
-"                border: 1px solid #e0e0e0;\n"
-"            }\n"
-"           "));
+"      QFrame {\n"
+"          background-color: white;\n"
+"          border-radius: 8px;\n"
+"          border: 1px solid #e0e0e0;\n"
+"      }\n"
+"     "));
         horizontalLayout_10 = new QHBoxLayout(frameRentalFilter);
         horizontalLayout_10->setObjectName("horizontalLayout_10");
         lineEditSearchRental = new QLineEdit(frameRentalFilter);
@@ -802,6 +803,13 @@ public:
 
         horizontalLayout_10->addWidget(btnViewRentalDetails);
 
+        btnReturnVehicle = new QPushButton(frameRentalFilter);
+        btnReturnVehicle->setObjectName("btnReturnVehicle");
+        btnReturnVehicle->setStyleSheet(QString::fromUtf8("background-color: #4CAF50; color: white;"));
+        btnReturnVehicle->setMinimumHeight(36);
+
+        horizontalLayout_10->addWidget(btnReturnVehicle);
+
         btnDeleteRental = new QPushButton(frameRentalFilter);
         btnDeleteRental->setObjectName("btnDeleteRental");
         btnDeleteRental->setMinimumHeight(36);
@@ -812,8 +820,8 @@ public:
         verticalLayout_12->addWidget(frameRentalFilter);
 
         tableRentals = new QTableWidget(tabRentals);
-        if (tableRentals->columnCount() < 6)
-            tableRentals->setColumnCount(6);
+        if (tableRentals->columnCount() < 7)
+            tableRentals->setColumnCount(7);
         QTableWidgetItem *__qtablewidgetitem29 = new QTableWidgetItem();
         tableRentals->setHorizontalHeaderItem(0, __qtablewidgetitem29);
         QTableWidgetItem *__qtablewidgetitem30 = new QTableWidgetItem();
@@ -826,6 +834,8 @@ public:
         tableRentals->setHorizontalHeaderItem(4, __qtablewidgetitem33);
         QTableWidgetItem *__qtablewidgetitem34 = new QTableWidgetItem();
         tableRentals->setHorizontalHeaderItem(5, __qtablewidgetitem34);
+        QTableWidgetItem *__qtablewidgetitem35 = new QTableWidgetItem();
+        tableRentals->setHorizontalHeaderItem(6, __qtablewidgetitem35);
         tableRentals->setObjectName("tableRentals");
         tableRentals->setAlternatingRowColors(true);
         tableRentals->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -984,6 +994,7 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tabNewRental), QCoreApplication::translate("MainWindow", " New Rental", nullptr));
         lineEditSearchRental->setPlaceholderText(QCoreApplication::translate("MainWindow", " Search by customer or ID...", nullptr));
         btnViewRentalDetails->setText(QCoreApplication::translate("MainWindow", " View Details", nullptr));
+        btnReturnVehicle->setText(QCoreApplication::translate("MainWindow", "\342\206\251 Return Vehicle", nullptr));
         btnDeleteRental->setText(QCoreApplication::translate("MainWindow", "\357\270\217 Delete", nullptr));
         QTableWidgetItem *___qtablewidgetitem28 = tableRentals->horizontalHeaderItem(0);
         ___qtablewidgetitem28->setText(QCoreApplication::translate("MainWindow", "ID", nullptr));
@@ -997,6 +1008,8 @@ public:
         ___qtablewidgetitem32->setText(QCoreApplication::translate("MainWindow", "Total Days", nullptr));
         QTableWidgetItem *___qtablewidgetitem33 = tableRentals->horizontalHeaderItem(5);
         ___qtablewidgetitem33->setText(QCoreApplication::translate("MainWindow", "Total", nullptr));
+        QTableWidgetItem *___qtablewidgetitem34 = tableRentals->horizontalHeaderItem(6);
+        ___qtablewidgetitem34->setText(QCoreApplication::translate("MainWindow", "Status", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabRentals), QCoreApplication::translate("MainWindow", " Rentals", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         menuHelp->setTitle(QCoreApplication::translate("MainWindow", "Help", nullptr));

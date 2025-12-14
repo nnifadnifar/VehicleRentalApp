@@ -1,1 +1,2 @@
-car:1|Toyota|Avanza|Manual|100000|0
+car:1|Toyota|Avanza|Manual|100000|1
+car:2|Mazda|CX-5|Matic|150000|1
